@@ -14,28 +14,54 @@ This project analyzes trader behavior under varying market sentiment using the *
 
 ---
 
+## Objective
+
+This project explores the relationship between trader performance and Bitcoin market sentiment using two primary datasets:
+
+1. **Bitcoin Market Sentiment Dataset** — containing daily Fear & Greed classifications.
+2. **Historical Trader Data from Hyperliquid** — detailed trade-level data including execution price, size, side, closed PnL, leverage, and more.
+
+The goal is to uncover hidden patterns and insights that link trader behavior to market sentiment. These insights aim to support smarter trading strategies by validating how market emotions such as fear and greed influence profitability in cryptocurrency trading.
+
+By analyzing these datasets, this project provides a data-driven approach to improve decision-making and performance in the volatile Web3 trading landscape.
+
+---
+
+## Methodology
+
+The analysis was conducted in the following steps:
+
+1. **Data Collection and Cleaning**  
+   - Imported the Bitcoin Market Sentiment dataset and Historical Trader Data from Hyperliquid.
+   - [📊 Historical Trade Data (Google Drive)](https://drive.google.com/file/d/1IAfLZwu6rJzyWKgBToqwSmmVYU6VbjVs/view?usp=sharing)
+   - [🧭 Bitcoin Fear & Greed Index (Google Drive)](https://drive.google.com/file/d/1PgQC0tO8XN-wqkNyghWc_-mnrYv_nhSf/view?usp=sharing)
+   - Cleaned and preprocessed the trade data by handling missing values, formatting timestamps, and standardizing categorical variables like trade side and sentiment labels.
+
+2. **Data Integration**  
+   - Merged the trader data with the sentiment dataset based on date to align each trade with the corresponding Fear & Greed Index classification.
+
+3. **Exploratory Data Analysis (EDA)**  
+   - Examined trade distributions across different sentiment categories.  
+   - Calculated summary statistics such as total trade volume, trade counts, and average profit and loss (PnL) for buy and sell sides under various market sentiments.
+
+4. **Visualization**  
+   - Created heatmaps and line plots to visualize the relationship between trade performance and sentiment categories.  
+   - Visualized PnL differences between buy and sell trades across sentiment levels to highlight key patterns.
+
+5. **Insight Derivation**  
+   - Analyzed patterns to confirm classical market psychology theories (buy during fear, sell during greed).  
+   - Quantified the profitability of trading strategies conditioned on the Fear & Greed Index.
+
+6. **Strategy Suggestion**  
+   - Proposed a real-world trading strategy leveraging sentiment data to time market entries and exits for improved returns.
+
+All analysis and visualizations were implemented using Python libraries including pandas, matplotlib, and seaborn within Jupyter notebooks.
+
+---
+
 ## 📝 Key Insights
 
-### 1. **Distribution of Profitability by Sentiment**
-![Avg PnL by Sentiment](images/pnl_vs_sentiment.png)
-
-> Traders performed best in **Fear** and **Extreme Greed**, while **Neutral** and **Extreme Fear** periods saw relatively lower average PnL.
-
----
-
-### 2. **Heatmap of Average PnL: Side vs Sentiment**
-![Avg PnL by Side and Sentiment](images/heatmap.png)
-
-This chart reveals critical behavior patterns:
-
-- In **Extreme Greed**, **SELL** trades vastly outperform **BUY** trades (Avg PnL: 65.24 vs 7.83)
-- In **Fear**, **BUY** trades are more profitable (63.02 vs 36.49)
-
-This supports contrarian strategies—**"Be greedy when others are fearful, and fearful when others are greedy."**
-
----
-
-### 3. **Summary Table: PnL and Trade Volume**
+### 1. **Summary Table: PnL and Trade Volume**
 ```python
 # Code used:
 trade_volume = cleaned_df.groupby(['sentiment', 'Side'])['Size USD'].sum().unstack(fill_value=0)
@@ -64,6 +90,18 @@ print(summary)
 ---
 
 ![PnL by Side and Sentiment](images/pnl_vs_side_sentiment.png)
+
+---
+
+### 2. **Heatmap of Average PnL: Side vs Sentiment**
+![Avg PnL by Side and Sentiment](images/heatmap.png)
+
+This chart reveals critical behavior patterns:
+
+- In **Extreme Greed**, **SELL** trades vastly outperform **BUY** trades (Avg PnL: 65.24 vs 7.83)
+- In **Fear**, **BUY** trades are more profitable (63.02 vs 36.49)
+
+This supports contrarian strategies—**"Be greedy when others are fearful, and fearful when others are greedy."**
 
 ---
 
@@ -103,7 +141,7 @@ This validates the contrarian strategy aligned with Fear-Greed theory.
 
 ---
 
-## Insights and Storytelling
+## Insights
 
 The data confirms the classical Fear & Greed Index theory:
 
