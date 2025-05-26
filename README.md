@@ -124,37 +124,6 @@ Together, this data supports the classical trading wisdom: **buy low during fear
 
 ---
 
-## 💡 How This Proves Fear & Greed Theory
-
-The **Fear & Greed Index** reflects investor sentiment. According to behavioral finance:
-
-- In **Fear**: Traders often panic-sell. Smart traders can **buy undervalued assets** and earn higher returns.
-- In **Greed**: Overconfidence leads to risky buys. **Short-selling or profit-booking** becomes more effective.
-- In **Extreme cases**, these behaviors become amplified, showing strong deviations in profitability.
-
-Our analysis supports this:
-- Fear → BUYing is highly profitable (avg +63)
-- Extreme Greed → SELLing is highly profitable (avg +65)
-- Neutral periods → mixed, lower signal
-
-This validates the contrarian strategy aligned with Fear-Greed theory.
-
----
-
-## Insights
-
-The data confirms the classical Fear & Greed Index theory:
-
-- **During Extreme Fear:** Buying yields a significantly higher average profit (~57.48) compared to selling (~18.15). This suggests buying when the market is fearful can be lucrative.
-
-- **During Extreme Greed:** Selling is more profitable (~65.24 average PnL) than buying (~7.83), supporting the strategy of taking profits when greed is high.
-
-- For other sentiments like Fear and Greed, the PnL differences are less stark but still follow the same trend.
-
-These results validate the strategy of **buying during fear and selling during greed** as a viable trading approach.
-
----
-
 ## Suggested Real-World Trading Strategy
 
 Leverage the Fear & Greed Index as a market timing tool to guide trade entries and exits:
