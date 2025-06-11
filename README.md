@@ -1,46 +1,56 @@
 
-# Trader Sentiment Analysis Based on Fear & Greed Index
+# 📊 Trader Sentiment Analysis Based on Fear & Greed Index
+
+![Banner](images/banner.png)
+
+---
 
 ## 🧠 Project Summary
 
-This project analyzes trader behavior under varying market sentiment using the **Bitcoin Fear & Greed Index** as a sentiment indicator. It explores how emotions—fear and greed—affect trading patterns, profitability, and volumes. By comparing trade statistics across sentiments, the analysis validates the behavioral finance theory that emotions drive trading behavior and performance.
+This project analyzes trader behavior under varying market sentiment using the **Bitcoin Fear & Greed Index**. It explores how emotions—fear and greed—affect trading patterns, profitability, and volume.
+
+By comparing trade statistics across sentiment levels, the analysis validates behavioral finance theory: **emotions drive trading performance**.
 
 ---
 
 ## 📁 Dataset Sources
 
-- [📊 Historical Trade Data (Google Drive)](https://drive.google.com/file/d/1IAfLZwu6rJzyWKgBToqwSmmVYU6VbjVs/view?usp=sharing)
+- [📊 Historical Trade Data (Google Drive)](https://drive.google.com/file/d/1IAfLZwu6rJzyWKgBToqwSmmVYU6VbjVs/view?usp=sharing)  
 - [🧭 Bitcoin Fear & Greed Index (Google Drive)](https://drive.google.com/file/d/1PgQC0tO8XN-wqkNyghWc_-mnrYv_nhSf/view?usp=sharing)
 
 ---
 
-## 📝 Key Insights
+## 🎯 Objective
 
-### 1. **Distribution of Profitability by Sentiment**
-![Avg PnL by Sentiment](images/pnl_vs_sentiment.png)
+This project explores the relationship between trader performance and Bitcoin market sentiment using two datasets:
 
-> Traders performed best in **Fear** and **Extreme Greed**, while **Neutral** and **Extreme Fear** periods saw relatively lower average PnL.
+- **Bitcoin Sentiment Data** – Daily Fear & Greed classifications  
+- **Hyperliquid Trade Data** – Detailed trades including side, size, closed PnL, leverage, etc.
 
----
-
-### 2. **Heatmap of Average PnL: Side vs Sentiment**
-![Avg PnL by Side and Sentiment](images/heatmap.png)
-
-This chart reveals critical behavior patterns:
-
-- In **Extreme Greed**, **SELL** trades vastly outperform **BUY** trades (Avg PnL: 65.24 vs 7.83)
-- In **Fear**, **BUY** trades are more profitable (63.02 vs 36.49)
-
-This supports contrarian strategies—**"Be greedy when others are fearful, and fearful when others are greedy."**
+The goal is to discover patterns that support smarter, emotion-aware trading strategies in volatile crypto markets.
 
 ---
 
-### 3. **Summary Table: PnL and Trade Volume**
+## 🧪 Methodology
+
+1. **Data Cleaning** – Removed nulls, aligned timestamps, standardized sentiment and side labels  
+2. **Integration** – Merged sentiment and trade data by date  
+3. **EDA** – Explored how trade counts, PnL, and volumes vary by sentiment  
+4. **Visualization** – Created heatmaps and plots for clarity  
+5. **Insight Derivation** – Quantified how fear and greed impact PnL  
+6. **Strategy Framing** – Suggested a sentiment-based real-world trading strategy
+
+---
+
+## 📊 Key Insights
+
+### 📌 Summary Table: PnL and Trade Volume
+
 ```python
-# Code used:
 trade_volume = cleaned_df.groupby(['sentiment', 'Side'])['Size USD'].sum().unstack(fill_value=0)
 trade_count = cleaned_df.groupby(['sentiment', 'Side']).size().unstack(fill_value=0)
 avg_pnl = cleaned_df.groupby(['sentiment', 'Side'])['Closed PnL'].mean().unstack(fill_value=0)
+
 summary = pd.concat([
     trade_count.add_prefix('TradeCount_'),
     trade_volume.add_prefix('TradeVolume_'),
@@ -59,103 +69,84 @@ print(summary)
 
 ---
 
-*Note: Counts represent the number of trades for each buy/sell side per sentiment. AvgPnL shows the average profit or loss per trade.*
-
----
-
 ![PnL by Side and Sentiment](images/pnl_vs_side_sentiment.png)
 
 ---
 
-## Explanation
+### 🔥 Heatmap: Avg PnL vs Side and Sentiment
 
-The table above summarizes trade counts and average profit/loss (PnL) for buy and sell sides across different market sentiments, while the heatmap visualizes the average closed PnL by trade side and sentiment.
+![Heatmap](images/heatmap.png)
 
-- **Extreme Fear:**  
-  Buying trades are highly profitable with an average PnL of 57.48, much greater than selling trades at 18.15. This suggests buying during periods of extreme fear can capture significant upside as prices tend to be undervalued.
+**Insights:**
 
-- **Extreme Greed:**  
-  Selling trades yield a higher average PnL (65.24) compared to buying trades (7.83), indicating it is often better to take profits or sell during greed-driven markets before corrections happen.
+- 📉 **Extreme Greed**: SELL trades vastly outperform BUY trades (65.24 vs 7.83)
+- 📈 **Fear**: BUY trades are more profitable (63.02 vs 36.49)
 
-- **Other Sentiments (Fear, Greed, Neutral):**  
-  The differences in PnL between buying and selling sides are less dramatic but generally follow the same trend — buying tends to perform better during fearful markets and selling performs better during greedy markets.
+These results validate the classic contrarian strategy:
 
-The heatmap visually reinforces these findings by showing darker red or blue areas where PnL is higher, helping quickly identify profitable trade types across market moods.
-
-Together, this data supports the classical trading wisdom: **buy low during fear, sell high during greed.**
+> _“Be greedy when others are fearful, and fearful when others are greedy.”_
 
 ---
 
-## 💡 How This Proves Fear & Greed Theory
+## 🧠 Explanation
 
-The **Fear & Greed Index** reflects investor sentiment. According to behavioral finance:
+- **Extreme Fear**: Buying is very profitable → undervalued assets  
+- **Extreme Greed**: Selling is highly profitable → profit-booking before corrections  
+- **Neutral**: Mixed signals, lower performance
 
-- In **Fear**: Traders often panic-sell. Smart traders can **buy undervalued assets** and earn higher returns.
-- In **Greed**: Overconfidence leads to risky buys. **Short-selling or profit-booking** becomes more effective.
-- In **Extreme cases**, these behaviors become amplified, showing strong deviations in profitability.
-
-Our analysis supports this:
-- Fear → BUYing is highly profitable (avg +63)
-- Extreme Greed → SELLing is highly profitable (avg +65)
-- Neutral periods → mixed, lower signal
-
-This validates the contrarian strategy aligned with Fear-Greed theory.
+The data supports using emotion as a trade filter.
 
 ---
 
-## Insights and Storytelling
+## 🧪 Strategy Suggestion
 
-The data confirms the classical Fear & Greed Index theory:
+📌 **Buy During Fear**  
+📌 **Sell During Greed**  
+📌 **Avoid Neutral Periods**
 
-- **During Extreme Fear:** Buying yields a significantly higher average profit (~57.48) compared to selling (~18.15). This suggests buying when the market is fearful can be lucrative.
-
-- **During Extreme Greed:** Selling is more profitable (~65.24 average PnL) than buying (~7.83), supporting the strategy of taking profits when greed is high.
-
-- For other sentiments like Fear and Greed, the PnL differences are less stark but still follow the same trend.
-
-These results validate the strategy of **buying during fear and selling during greed** as a viable trading approach.
+Sentiment-driven signals can serve as **entry/exit triggers** to reduce emotional bias and optimize profits.
 
 ---
 
-## Suggested Real-World Trading Strategy
+## 💡 Why This Matters
 
-Leverage the Fear & Greed Index as a market timing tool to guide trade entries and exits:
-
-1. **Buy Signal:** When the index signals **Extreme Fear** or **Fear**, prioritize opening buy positions. The market tends to undervalue assets during these periods, increasing potential upside.
-
-2. **Sell Signal:** When the index indicates **Extreme Greed** or **Greed**, consider closing or reducing long positions and/or opening sell positions. Market exuberance often precedes corrections.
-
-3. **Neutral Periods:** Use additional indicators or avoid heavy trading to reduce risk during neutral sentiment phases.
-
-This approach, supported by historical data analysis, aligns with behavioral finance principles and aims to capitalize on crowd emotions in crypto markets.
+- Applies **behavioral finance** to real trading data  
+- Quantifies **emotional alpha**  
+- Builds a data-driven case for **contrarian investing**
 
 ---
 
-## ⭐ Why This Matters
+## ✅ Conclusion
 
-Understanding sentiment-based trading behavior enables firms to build **smarter strategies**, avoid **herd psychology**, and profit from **emotional extremes** in the market. This project proves how **data-driven emotion analysis** can offer a measurable trading edge.
-
----
-
-## Conclusion
-
-This project demonstrates how integrating trader behavior data with market sentiment indexes can provide actionable insights. The validation of the Fear & Greed Index strategy through quantitative analysis equips traders and analysts with a data-driven framework for smarter decision making in volatile crypto markets.
+By blending market psychology with historical trader data, this project proves that **sentiment-aware strategies** can deliver measurable trading advantages.
 
 ---
 
-## 🧰 Libraries Used
+## 💻 Tech Stack
 
 ```text
-pandas
-matplotlib
-seaborn
-jupyter
+Python 🐍  
+Pandas 📊  
+Seaborn 📉  
+Matplotlib 🎨  
+Jupyter 📒  
 ```
+
+> 🧠 Powered by Python + Pandas + Seaborn  
+> 💡 Visuals built for clarity and data storytelling  
 
 ---
 
-## 📈 Visuals
+## 📂 Visuals
 
-Images are located inside the `/images/` folder for clarity and reuse.
+All images are stored inside the `/images/` folder.
+
+---
+
+## 📌 Repo Maintainer
+
+**Vishnujan Narayanan**  
+Data Analyst & Behavioral Market Enthusiast  
+[LinkedIn](https://linkedin.com/in/your-profile) • [Portfolio](#) • [Email](mailto:you@example.com)
 
 ---
