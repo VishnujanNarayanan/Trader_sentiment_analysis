@@ -1,11 +1,11 @@
 
-# 📊 Trader Sentiment Analysis Based on Fear & Greed Index
+#  Trader Sentiment Analysis Based on Fear & Greed Index
 
 ![Banner](images/banner.png)
 
 ---
 
-## 🧠 Project Summary
+## Project Summary
 
 This project analyzes trader behavior under varying market sentiment using the **Bitcoin Fear & Greed Index**. It explores how emotions—fear and greed—affect trading patterns, profitability, and volume.
 
@@ -13,14 +13,14 @@ By comparing trade statistics across sentiment levels, the analysis validates be
 
 ---
 
-## 📁 Dataset Sources
+## Dataset Sources
 
 - [📊 Historical Trade Data (Google Drive)](https://drive.google.com/file/d/1IAfLZwu6rJzyWKgBToqwSmmVYU6VbjVs/view?usp=sharing)  
 - [🧭 Bitcoin Fear & Greed Index (Google Drive)](https://drive.google.com/file/d/1PgQC0tO8XN-wqkNyghWc_-mnrYv_nhSf/view?usp=sharing)
 
 ---
 
-## 🎯 Objective
+## Objective
 
 This project explores the relationship between trader performance and Bitcoin market sentiment using two datasets:
 
@@ -31,7 +31,7 @@ The goal is to discover patterns that support smarter, emotion-aware trading str
 
 ---
 
-## 🧪 Methodology
+## Methodology
 
 1. **Data Cleaning** – Removed nulls, aligned timestamps, standardized sentiment and side labels  
 2. **Integration** – Merged sentiment and trade data by date  
@@ -42,9 +42,9 @@ The goal is to discover patterns that support smarter, emotion-aware trading str
 
 ---
 
-## 📊 Key Insights
+## Key Insights
 
-### 📌 Summary Table: PnL and Trade Volume
+### Summary Table: PnL and Trade Volume
 
 ```python
 trade_volume = cleaned_df.groupby(['sentiment', 'Side'])['Size USD'].sum().unstack(fill_value=0)
@@ -73,7 +73,7 @@ print(summary)
 
 ---
 
-### 🔥 Heatmap: Avg PnL vs Side and Sentiment
+### Heatmap: Avg PnL vs Side and Sentiment
 
 ![Heatmap](images/heatmap.png)
 
@@ -88,7 +88,7 @@ These results validate the classic contrarian strategy:
 
 ---
 
-## 🧠 Explanation
+## Explanation
 
 - **Extreme Fear**: Buying is very profitable → undervalued assets  
 - **Extreme Greed**: Selling is highly profitable → profit-booking before corrections  
@@ -98,17 +98,17 @@ The data supports using emotion as a trade filter.
 
 ---
 
-## 🧪 Strategy Suggestion
+## Strategy Suggestion
 
-📌 **Buy During Fear**  
-📌 **Sell During Greed**  
-📌 **Avoid Neutral Periods**
+ **Buy During Fear**  
+ **Sell During Greed**  
+ **Avoid Neutral Periods**
 
 Sentiment-driven signals can serve as **entry/exit triggers** to reduce emotional bias and optimize profits.
 
 ---
 
-## 💡 Why This Matters
+## Why This Matters
 
 - Applies **behavioral finance** to real trading data  
 - Quantifies **emotional alpha**  
@@ -116,37 +116,36 @@ Sentiment-driven signals can serve as **entry/exit triggers** to reduce emotiona
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 
 By blending market psychology with historical trader data, this project proves that **sentiment-aware strategies** can deliver measurable trading advantages.
 
 ---
 
-## 💻 Tech Stack
+## Tech Stack
 
 ```text
-Python 🐍  
-Pandas 📊  
-Seaborn 📉  
-Matplotlib 🎨  
-Jupyter 📒  
+Python  
+Pandas 
+Seaborn   
+Matplotlib 
+Jupyter 
 ```
 
-> 🧠 Powered by Python + Pandas + Seaborn  
-> 💡 Visuals built for clarity and data storytelling  
+>  Powered by Python + Pandas + Seaborn  
+>  Visuals built for clarity and data storytelling  
 
 ---
 
-## 📂 Visuals
+##  Visuals
 
 All images are stored inside the `/images/` folder.
 
 ---
 
-## 📌 Repo Maintainer
+##  Repo Maintaintained by
 
 **Vishnujan Narayanan**  
-Data Analyst & Behavioral Market Enthusiast  
-[LinkedIn](https://linkedin.com/in/your-profile) • [Portfolio](#) • [Email](mailto:you@example.com)
+[LinkedIn](www.linkedin.com/in/vishnujan-narayanan) 
 
 ---
