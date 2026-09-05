@@ -7,7 +7,8 @@ import pytest
 def trades_csv(tmp_path):
     """A Hyperliquid-shaped export: two dates, both sides, one extreme position."""
     rows = [
-        # Account, Coin, ExecPrice, SizeTokens, SizeUSD, Side, Timestamp IST, StartPos, Direction, PnL, Fee
+        # Account, Coin, ExecPrice, SizeTokens, SizeUSD, Side,
+        # Timestamp IST, StartPos, Direction, PnL, Fee
         ("0xa", "BTC", 100.0, 1.0, 100.0, "BUY", "02-12-2024 22:50", 0, "Buy", 10.0, 0.1),
         ("0xa", "BTC", 101.0, 1.0, 101.0, "SELL", "02-12-2024 23:50", 10, "Sell", -5.0, 0.1),
         ("0xb", "ETH", 50.0, 2.0, 100.0, "BUY", "03-12-2024 10:00", 5, "Buy", 20.0, 0.2),
