@@ -1,0 +1,6 @@
+# Normalise line endings. Without this a WSL/Windows round-trip rewrote every
+# line of README.md, requirements.txt and the notebook as pure CRLF churn,
+# burying the two-line change that was actually made.
+* text=auto eol=lf
+*.png binary
+*.ipynb text eol=lf
