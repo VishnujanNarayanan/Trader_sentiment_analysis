@@ -1,0 +1,23 @@
+[project]
+name = "trader-sentiment"
+version = "0.1.0"
+description = "Does contrarian trading pay? Hyperliquid trade PnL against the Bitcoin Fear & Greed index"
+requires-python = ">=3.9"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+# The original notebook predates these modules and is rewritten against them in
+# a later change; excluded until then.
+extend-exclude = ["traders_sentiment.ipynb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

@@ -1,0 +1,31 @@
+# Data — the trade history and the index snapshot are fetched, not committed.
+data/
+*.csv
+!requirements*.csv
+*.db
+*.sqlite
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+env/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Notebook
+.ipynb_checkpoints/
+
+# Models
+*.joblib
+*.pkl
+
+# OS
+.DS_Store
+
+# Resume extraction material — personal career data, never committed
+bullet_extract_latest.yaml
+bullet_extract_[0-9]*.yaml
+resume_extract*.yaml
