@@ -1,0 +1,12 @@
+services:
+  build:
+    build: .
+    volumes:
+      - ./data:/data
+    environment:
+      TS_DATA_DIR: /data
+      TS_DB_PATH: /data/trader_sentiment.db
+
+  tests:
+    build: .
+    command: ["pytest", "-v"]
