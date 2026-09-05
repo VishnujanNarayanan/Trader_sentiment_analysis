@@ -13,6 +13,7 @@
   <img alt="Jupyter" src="https://img.shields.io/badge/Jupyter-notebook-F37626?logo=jupyter&logoColor=white"/>
   <img alt="Domain" src="https://img.shields.io/badge/Domain-Behavioural_Finance-5B21B6"/>
   <img alt="License" src="https://img.shields.io/badge/License-MIT-750014"/>
+  <a href="https://github.com/VishnujanNarayanan/Trader_sentiment_analysis/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/VishnujanNarayanan/Trader_sentiment_analysis/actions/workflows/ci.yml/badge.svg"/></a>
   <br>
   <a href="https://vishnujan-narayanan.vercel.app/"><img alt="Portfolio" src="https://img.shields.io/badge/Portfolio-vishnujan--narayanan.vercel.app-3b5998?logo=googlechrome&logoColor=white&style=for-the-badge"/></a>
   <a href="https://github.com/VishnujanNarayanan"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-VishnujanNarayanan-181717?logo=github&logoColor=white&style=for-the-badge"/></a>
@@ -85,81 +86,91 @@ The goal is to discover patterns that support smarter, emotion-aware trading str
 
 ## Key Insights
 
-### Summary Table: PnL and Trade Volume
+### The contrarian edge is real at the band level
 
-```python
-trade_volume = cleaned_df.groupby(['sentiment', 'Side'])['Size USD'].sum().unstack(fill_value=0)
-trade_count = cleaned_df.groupby(['sentiment', 'Side']).size().unstack(fill_value=0)
-avg_pnl = cleaned_df.groupby(['sentiment', 'Side'])['Closed PnL'].mean().unstack(fill_value=0)
+Buy-minus-sell average profit, per sentiment band, over 167,331 trades:
 
-summary = pd.concat([
-    trade_count.add_prefix('TradeCount_'),
-    trade_volume.add_prefix('TradeVolume_'),
-    avg_pnl.add_prefix('AvgPnL_')
-], axis=1).round(2)
-print(summary)
-```
+| sentiment | buy PnL | sell PnL | buy − sell | favours |
+|---|---|---|---|---|
+| Extreme Fear | 55.67 | 24.20 | **+31.47** | BUY |
+| Fear | 64.81 | 37.73 | **+27.08** | BUY |
+| Neutral | 17.88 | 42.37 | −24.49 | SELL |
+| Greed | 35.01 | 39.32 | −4.31 | SELL |
+| Extreme Greed | 6.54 | 71.73 | **−65.18** | SELL |
 
-| Sentiment     | TradeCount_BUY | TradeCount_SELL | TradeVolume_BUY | TradeVolume_SELL | AvgPnL_BUY | AvgPnL_SELL |
-|---------------|----------------|-----------------|------------------|------------------|------------|-------------|
-| Extreme Fear  | 7780           | 8313            | 46.61M           | 47.31M           | 57.48      | 18.15       |
-| Extreme Greed | 14793          | 17541           | 53.98M           | 55.91M           | 7.83       | 65.24       |
-| Fear          | 22992          | 23973           | 226.59M          | 214.18M          | 63.02      | 36.49       |
-| Greed         | 19698          | 20928           | 144.48M          | 124.45M          | 37.81      | 38.93       |
-| Neutral       | 16001          | 15312           | 68.71M           | 100.48M          | 25.28      | 44.17       |
-
----
-
-![PnL by Side and Sentiment](images/pnl_vs_side_sentiment.png)
-
----
-
-### Heatmap: Avg PnL vs Side and Sentiment
+Monotonic: strongly positive under fear, strongly negative under greed. Kruskal-Wallis
+H = 685.66, p ≈ 4e-147, and **all ten pairwise comparisons survive a Bonferroni
+correction**. Profit is nowhere near normally distributed, which is why the comparison is
+rank-based rather than an ANOVA.
 
 ![Heatmap](images/heatmap.png)
 
-**Insights:**
+### …but it does not predict an individual trade
 
-- 📉 **Extreme Greed**: SELL trades vastly outperform BUY trades (65.24 vs 7.83)
-- 📈 **Fear**: BUY trades are more profitable (63.02 vs 36.49)
+A difference in *average* profit is not the same claim as calling a *single* trade.
+Tested directly, a classifier scores:
 
-These results validate the classic contrarian strategy:
+```
+ROC-AUC   0.5310
+base rate 0.8376
+```
 
-> _“Be greedy when others are fearful, and fearful when others are greedy.”_
+**0.53 is barely better than a coin flip.** Sentiment shifts the average; it does not call
+the trade. That distinction is what separates a finding from a trading strategy, and it is
+the reason the "Strategy Suggestion" below is framed as a description of the past.
 
----
+<details>
+<summary>The leak that first scored 0.94 on this task</summary>
 
-## Explanation
+The first attempt scored ROC-AUC 0.94, which is not a plausible number here. Roughly half
+the export's rows are opens and adds, carrying `closed_pnl == 0` because no position was
+closed. Labelling those "not profitable" turned the task into *"is this row a close?"* — a
+question about the file format, which `Start Position` answers outright (it took 55% of the
+feature importance, and `Start Position == 0` separated the classes perfectly).
 
-- **Extreme Fear**: Buying is very profitable → undervalued assets  
-- **Extreme Greed**: Selling is highly profitable → profit-booking before corrections  
-- **Neutral**: Mixed signals, lower performance
+Restricted to the 80,522 genuine closes, the honest score is 0.53. `closing_trades()` now
+enforces the filter and two tests pin the leak so it cannot return.
+</details>
 
-The data supports using emotion as a trade filter.
+### The edge survives fees
+
+The original writeup listed "costs are excluded" as a limitation and stopped there. Measured:
+
+| sentiment | avg PnL | avg fee | net of fee | fee as % of PnL |
+|---|---|---|---|---|
+| Neutral | 29.45 | 1.15 | 28.30 | 3.90% |
+| Fear | 50.83 | 1.83 | 49.00 | 3.60% |
+| Greed | 37.27 | 1.33 | 35.94 | 3.56% |
+| Extreme Fear | 39.43 | 1.28 | 38.15 | 3.26% |
+| Extreme Greed | 41.13 | 0.78 | 40.35 | 1.90% |
+
+Fees eat 1.9–3.9% against a +31 edge. It survives.
+
+### The effective sample is 32 traders, not 167,331 trades
+
+This is the sharpest caveat in the project, and it was previously only prose:
+
+```
+accounts in the dataset:  32
+top 1  account:  23.5% of all profit
+top 5  accounts: 62.6%
+top 10 accounts: 83.9%
+```
+
+**"Traders earn more buying into fear" is much closer to "these few traders did."** The
+trade count is a big number attached to a small sample, and the honest reading of every
+table above is conditioned on that.
 
 ---
 
 ## Strategy Suggestion
 
- **Buy During Fear**  
- **Sell During Greed**  
- **Avoid Neutral Periods**
+Buy during fear, sell during greed, stand aside when neutral.
 
-Sentiment-driven signals can serve as **entry/exit triggers** to reduce emotional bias and optimize profits.
-
----
-
-## Why This Matters
-
-- Applies **behavioral finance** to real trading data  
-- Quantifies **emotional alpha**  
-- Builds a data-driven case for **contrarian investing**
-
----
-
-## Conclusion
-
-By blending market psychology with historical trader data, this project proves that **sentiment-aware strategies** can deliver measurable trading advantages.
+Stated plainly: this is **a description of the past, not a validated rule**. It is derived
+from the same data used to measure the effect, there is no out-of-sample test, and the
+per-trade result above says the signal does not survive to the level of an individual
+decision.
 
 ---
 
@@ -190,15 +201,22 @@ placed. That is the assumption the whole analysis rests on — see [Limitations]
 
 ```
 Trader_sentiment_analysis/
-├── traders_sentiment.ipynb     # The analysis: cleaning, merge, aggregation, figures
-├── images/                     # Generated figures + banner
-│   ├── banner.png
-│   ├── heatmap.png
-│   ├── pnl_vs_sentiment.png
-│   ├── pnl_vs_side_sentiment.png
-│   └── Trader_sentiment_analysis2.png / 3.png
-├── requirements.txt
-└── README.md
+├── src/trader_sentiment/       # the tested logic
+│   ├── config.py               #   paths from the environment
+│   ├── fear_greed.py           #   the index, from its public API
+│   ├── loaders.py              #   the trade export
+│   ├── clean.py                #   join, coverage report, IQR filter
+│   ├── analysis.py             #   summary tables and the contrarian edge
+│   ├── stats.py                #   Shapiro -> Kruskal -> Dunn/Bonferroni
+│   ├── model.py                #   the per-trade classifier
+│   ├── db.py                   #   SQLite warehouse
+│   └── build.py                #   python -m trader_sentiment.build
+├── sql/                        # every question, as a file CI executes
+├── tests/                      # 67 tests, no data or network required
+├── app.py                      # the Streamlit page
+├── traders_sentiment.ipynb     # the narrative, calling the modules
+├── Dockerfile / docker-compose.yml
+└── .github/workflows/ci.yml    # ruff, pytest (3.10 + 3.12), notebook, docker
 ```
 
 ---
@@ -210,29 +228,33 @@ git clone https://github.com/VishnujanNarayanan/Trader_sentiment_analysis.git
 cd Trader_sentiment_analysis
 
 python -m venv env
-source env/bin/activate      # Linux / macOS
-env\Scripts\activate         # Windows
+source env/bin/activate          # Linux / macOS
+env\Scripts\activate            # Windows
 
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
-Download both datasets from the [links above](#dataset-sources) and place them beside the
-notebook, then:
+The sentiment index downloads itself. Point at your copy of the trade export and build:
 
 ```bash
+export TS_TRADES_CSV=/path/to/historical_data.csv
+python -m trader_sentiment.build      # -> data/trader_sentiment.db
+pytest                                # 67 tests, needs neither data nor network
 jupyter notebook traders_sentiment.ipynb
 ```
 
----
+The interactive page:
 
-## Dependencies
+```bash
+streamlit run app.py                  # http://localhost:8501
+```
 
-| Package | Why |
-|---|---|
-| `pandas` | Cleaning, the date merge, and every groupby aggregation |
-| `seaborn` | The sentiment × side heatmap |
-| `matplotlib` | Bar charts and figure export |
-| `notebook` | Running the analysis |
+With Docker:
+
+```bash
+docker compose run --rm tests
+docker compose up app                 # the page on :8501
+```
 
 ---
 
@@ -250,26 +272,21 @@ All figures are generated by the notebook and written to `images/`.
 
 ## Limitations
 
-- **The effect is measured, not explained.** Higher average PnL for buyers during fear is a
-  correlation. Nothing here establishes that sentiment *caused* it.
-- **Sentiment is joined at daily resolution.** A trade placed during a mid-day reversal is
-  labelled with the whole day's classification.
-- **Averages hide the distribution.** `mean(Closed PnL)` is reported without medians, variance, or
-  confidence intervals, so a handful of large wins can move a cell substantially.
-- **No statistical significance testing.** The differences between cells are not tested, so it is
-  unknown which of them would survive a hypothesis test.
-- **Position size is not controlled for.** Trade volume varies more than 4× across sentiment
-  bands, and per-trade average PnL does not adjust for that.
-- **Survivorship and selection are unaddressed.** These are the traders who were active on
-  Hyperliquid in this window, which is not a random sample of traders.
-- **Costs are excluded.** Fees, funding, and slippage are not netted out of closed PnL.
-- **One venue, one asset class.** Hyperliquid perpetuals only; the result may not generalise.
-- **No out-of-sample check.** The strategy suggestion is derived from the same data used to
-  measure the effect, so it is a description of the past rather than a validated rule.
-- **The datasets are hosted on Google Drive**, not committed, so reproducibility depends on
-  those links staying live.
-
----
+- **The effect is measured, not explained.** Higher average profit for buyers during fear
+  is a correlation. Nothing here establishes that sentiment *caused* it.
+- **32 accounts.** The single largest caveat — quantified above, and it conditions
+  everything else.
+- **Not a per-trade signal.** ROC-AUC 0.53. The band-level effect does not descend to the
+  individual trade.
+- **Sentiment is joined at daily resolution.** A trade placed during a mid-day reversal
+  carries the whole day's classification.
+- **Averages hide the distribution.** Means are reported without confidence intervals, so
+  a handful of large wins can move a cell.
+- **Position size is not controlled for.** Volume varies more than 4× across bands and
+  per-trade average profit does not adjust for it.
+- **Fees are accounted for; slippage and funding are not.**
+- **One venue, one asset class.** Hyperliquid perpetuals only.
+- **No out-of-sample check** of the strategy suggestion.
 
 ## Roadmap
 
@@ -285,7 +302,9 @@ All figures are generated by the notebook and written to `images/`.
 ## Tech Stack
 
 ```text
-Python · Pandas · Seaborn · Matplotlib · Jupyter
+Python · pandas · NumPy · scikit-learn · SciPy · scikit-posthocs
+SQL (SQLite) · Streamlit · seaborn · Matplotlib · Jupyter
+pytest · ruff · Docker · GitHub Actions
 ```
 
 ---
