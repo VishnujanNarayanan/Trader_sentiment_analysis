@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        # The suite runs on fixtures, never on the 47MB export and never on the
+        # network, so CI needs no secrets and no downloads.
+        run: pytest -v
+
+  notebook:
+    # The notebook is the narrative layer. This checks it still parses and that
+    # its imports resolve against the installed package -- it does not execute
+    # the analysis, which needs the data.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Notebook is valid JSON and its imports resolve
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          for path in pathlib.Path(".").glob("*.ipynb"):
+              nb = json.loads(path.read_text(encoding="utf-8"))
+              assert nb.get("cells"), f"{path} has no cells"
+              print(f"{path}: {len(nb['cells'])} cells, valid JSON")
+          PY
+          python -c "import trader_sentiment, trader_sentiment.model, trader_sentiment.db"
+        env:
+          PYTHONPATH: src
