@@ -60,3 +60,14 @@ jobs:
           python -c "import trader_sentiment, trader_sentiment.model, trader_sentiment.db"
         env:
           PYTHONPATH: src
+
+  docker:
+    # A Dockerfile nobody runs is decoration, so this builds the image and runs
+    # the suite inside it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t trader-sentiment .
+      - name: Run the test suite inside the image
+        run: docker run --rm trader-sentiment pytest -q
