@@ -2,10 +2,12 @@
 
 **Live at <https://trader-sentiment-demo.streamlit.app/>.**
 
-> **The app must be set to public.** In Streamlit Community Cloud open the app →
-> **Settings → Sharing** → set viewer access to *"Anyone with the link"* (public).
-> While it is private the URL answers `303` and redirects visitors to a login page,
-> which for a portfolio link is worse than having no link at all.
+> Sharing is set to **"This app is public and searchable"** (Settings → Sharing).
+>
+> Note when checking it from a script: the first request 303-redirects to
+> `/-/login?payload=...` to set a session cookie, then bounces back to the app. A browser
+> handles that invisibly, and so does `curl -L -c cookiejar`, but a plain `curl -L` without
+> a cookie jar gets stuck on the redirect and looks like a login wall. It is not one.
 
 The app is a single Streamlit page (`app.py`) showing the contrarian edge per
 sentiment band, the live Fear & Greed index, and the caveats that matter.
