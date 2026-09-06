@@ -14,6 +14,7 @@
   <img alt="Domain" src="https://img.shields.io/badge/Domain-Behavioural_Finance-5B21B6"/>
   <img alt="License" src="https://img.shields.io/badge/License-MIT-750014"/>
   <a href="https://github.com/VishnujanNarayanan/Trader_sentiment_analysis/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/VishnujanNarayanan/Trader_sentiment_analysis/actions/workflows/ci.yml/badge.svg"/></a>
+  <a href="https://trader-sentiment-demo.streamlit.app/"><img alt="Live demo" src="https://img.shields.io/badge/Live_demo-trader--sentiment--demo.streamlit.app-FF4B4B?logo=streamlit&logoColor=white&style=for-the-badge"/></a>
   <br>
   <a href="https://vishnujan-narayanan.vercel.app/"><img alt="Portfolio" src="https://img.shields.io/badge/Portfolio-vishnujan--narayanan.vercel.app-3b5998?logo=googlechrome&logoColor=white&style=for-the-badge"/></a>
   <a href="https://github.com/VishnujanNarayanan"><img alt="GitHub" src="https://img.shields.io/badge/GitHub-VishnujanNarayanan-181717?logo=github&logoColor=white&style=for-the-badge"/></a>
@@ -31,6 +32,21 @@
 </p>
 
 ![Banner](images/banner.png)
+
+---
+
+## Live demo
+
+**<https://trader-sentiment-demo.streamlit.app/>**
+
+The contrarian edge per sentiment band, the Bitcoin Fear & Greed index pulled live from
+the public API, and the caveats that matter — the per-trade ROC-AUC, the 32-account
+concentration, and what fees do to the edge.
+
+The 47MB trade export is not bundled with the deployment, so the page runs against a
+precomputed summary of the full 167,331-trade result and says so in a banner. Every figure
+on it is reproducible with `python -m trader_sentiment.build`. The app may take ~30 seconds
+to wake if it has been idle.
 
 ---
 
